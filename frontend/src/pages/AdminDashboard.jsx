@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { FaUsers, FaComments, FaChartLine, FaEdit, FaTrash, FaPlus, FaCheck, FaShieldAlt } from 'react-icons/fa';
 
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/stats', config);
+            const { data } = await api.get('/admin/stats', config);
             setStats(data);
         } catch (error) { console.error(error); }
     };
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/users', config);
+            const { data } = await api.get('/admin/users', config);
             setUsersList(data);
         } catch (error) { console.error(error); }
     };
@@ -61,14 +61,14 @@ const AdminDashboard = () => {
     const fetchConversations = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/admin/conversations', config);
+            const { data } = await api.get('/admin/conversations', config);
             setConversationsList(data);
         } catch (error) { console.error(error); }
     };
 
     const fetchSchemes = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/schemes');
+            const { data } = await api.get('/schemes');
             setSchemesList(data);
         } catch (error) { console.error(error); }
     };
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
     const fetchComplaints = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/complaints', config);
+            const { data } = await api.get('/complaints', config);
             setComplaintsList(data);
         } catch (error) { console.error(error); }
     };
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
     const handleResolveComplaint = async (id) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/complaints/${id}`, { status: 'resolved' }, config);
+            await api.put(`/complaints/${id}`, { status: 'resolved' }, config);
             fetchComplaints();
         } catch (error) { console.error(error); }
     };
@@ -119,9 +119,9 @@ const AdminDashboard = () => {
             };
 
             if (currentScheme) {
-                await axios.put(`http://localhost:5000/api/schemes/${currentScheme._id}`, payload, config);
+                await api.put(`/schemes/${currentScheme._id}`, payload, config);
             } else {
-                await axios.post(`http://localhost:5000/api/schemes`, payload, config);
+                await api.post(`/schemes`, payload, config);
             }
             setIsSchemeModalOpen(false);
             fetchSchemes();
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
         if (window.confirm("Are you sure you want to delete this scheme?")) {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                await axios.delete(`http://localhost:5000/api/schemes/${id}`, config);
+                await api.delete(`/schemes/${id}`, config);
                 fetchSchemes();
             } catch (error) { console.error(error); }
         }
@@ -151,10 +151,10 @@ const AdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 relative">
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto pt-20">
                 <header className="mb-8 flex justify-between items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
+                        <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">Admin Dashboard</h1>
                         <p className="text-gray-600 dark:text-gray-400">Manage users, schemes, and monitor system performance.</p>
                     </div>
                     <button
@@ -167,7 +167,7 @@ const AdminDashboard = () => {
 
                 {/* Stats Cards */}
                 <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="glass-strong p-6 rounded-xl">
                         <div className="flex items-center gap-4">
                             <div className="p-4 bg-purple-100 text-purple-600 rounded-lg text-2xl"><FaUsers /></div>
                             <div>
@@ -252,7 +252,7 @@ const AdminDashboard = () => {
                 )}
 
                 {/* Main Content Area */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="glass-strong rounded-xl overflow-hidden">
                     <div className="border-b border-gray-200 dark:border-gray-700">
                         <nav className="flex -mb-px overflow-x-auto">
                             <button

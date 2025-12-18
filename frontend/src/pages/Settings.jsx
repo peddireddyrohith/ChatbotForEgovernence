@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api';
 import { motion } from 'framer-motion';
 
 const Settings = () => {
@@ -28,8 +28,8 @@ const Settings = () => {
                 },
             };
 
-            const { data } = await axios.put(
-                'http://localhost:5000/api/auth/profile',
+            const { data } = await api.put(
+                '/auth/profile',
                 { name, email, password },
                 config
             );

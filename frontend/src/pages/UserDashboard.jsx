@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { FaHistory, FaUserCircle, FaEnvelope, FaCalendarAlt, FaShieldAlt, FaComments } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -22,10 +21,10 @@ const UserDashboard = () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
-                const chatsRes = await axios.get('http://localhost:5000/api/chat', config);
+                const chatsRes = await api.get('/chat', config);
                 setConversations(chatsRes.data);
 
-                const complaintsRes = await axios.get('http://localhost:5000/api/complaints', config);
+                const complaintsRes = await api.get('/complaints', config);
                 setComplaints(complaintsRes.data);
             } catch (error) {
                 console.error(error);
@@ -38,12 +37,12 @@ const UserDashboard = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/complaints', complaintForm, config);
+            await api.post('/complaints', complaintForm, config);
             alert('Complaint Submitted Successfully');
             setIsComplaintModalOpen(false);
             setComplaintForm({ title: '', description: '', category: 'general', priority: 'medium' });
             // Refresh
-            const res = await axios.get('http://localhost:5000/api/complaints', config);
+            const res = await api.get('/complaints', config);
             setComplaints(res.data);
         } catch (error) {
             console.error(error);
@@ -53,12 +52,12 @@ const UserDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">My Dashboard</h1>
+            <div className="max-w-7xl mx-auto pt-20">
+                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-400 dark:to-indigo-400 mb-8">My Dashboard</h1>
 
                 <div className="grid md:grid-cols-12 gap-6 mb-8">
                     {/* Profile Card */}
-                    <div className="md:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="md:col-span-4 glass-strong p-6 rounded-2xl">
                         <div className="text-center mb-6">
                             <div className="w-24 h-24 bg-violet-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-600 dark:text-violet-400">
                                 <FaUserCircle className="text-5xl" />
@@ -113,7 +112,7 @@ const UserDashboard = () => {
                         </div>
 
                         {/* Recent Activity */}
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div className="glass-strong rounded-2xl overflow-hidden">
                             <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">Recent Activities</h2>
                                 <Link to="/chat" className="text-violet-600 hover:text-violet-700 text-sm font-medium">View All</Link>
@@ -150,7 +149,7 @@ const UserDashboard = () => {
                 </div>
 
                 {/* Complaints Section */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-8">
+                <div className="glass-strong rounded-2xl p-6 mb-8">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-bold text-gray-800 dark:text-white">My Complaints & Issues</h2>
                         <button

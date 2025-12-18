@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api, { API_BASE_URL } from '../api';
 import { io } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import ChatBubble from '../components/ChatBubble';
-import { FaPaperPlane, FaPlus, FaComments, FaTrash, FaExclamationCircle } from 'react-icons/fa';
+import { FaPaperPlane, FaPlus, FaComments, FaTrash, FaExclamationCircle, FaCheck } from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const ENDPOINT = 'http://localhost:5000';
+const ENDPOINT = API_BASE_URL;
 let socket;
 
 const ChatInterface = () => {
@@ -105,7 +105,7 @@ const ChatInterface = () => {
                 const fetchConvs = async () => {
                     try {
                         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                        const { data } = await axios.get(`${ENDPOINT}/api/chat`, config);
+                        const { data } = await api.get('/chat', config);
                         setConversations(data);
                     } catch (error) { console.error(error); }
                 };
@@ -145,14 +145,14 @@ const ChatInterface = () => {
     const fetchConversations = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get(`${ENDPOINT}/api/chat`, config);
+            const { data } = await api.get('/chat', config);
             setConversations(data);
 
             // Check Queue Position only if we have a current chat 
             if (currentChatIdRef.current) {
                 const currentChat = data.find(c => c._id === currentChatIdRef.current);
                 if (currentChat?.status === 'flagged' && !currentChat.assignedTo) {
-                    const qRes = await axios.get(`${ENDPOINT}/api/chat/${currentChatIdRef.current}/queue`, config);
+                    const qRes = await api.get(`/chat/${currentChatIdRef.current}/queue`, config);
                     setQueuePosition(qRes.data.position);
                 } else {
                     setQueuePosition(0);
@@ -167,7 +167,7 @@ const ChatInterface = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             setIsLoadingMessages(true);
-            const { data } = await axios.get(`${ENDPOINT}/api/chat/${chatId}`, config);
+            const { data } = await api.get(`/chat/${chatId}`, config);
             setMessages(data);
         } catch (error) {
             console.error("Error fetching messages:", error);
@@ -188,7 +188,7 @@ const ChatInterface = () => {
             setIsTyping(true); // Optimistic UI
 
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post(`${ENDPOINT}/api/chat`, {
+            const { data } = await api.post('/chat', {
                 text: textToSend,
                 conversationId: currentChatId
             }, config);
@@ -265,7 +265,7 @@ const ChatInterface = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post(`${ENDPOINT}/api/complaints`, complaintForm, config);
+            await api.post('/complaints', complaintForm, config);
 
             await Swal.fire({
                 title: 'Success!',
@@ -306,7 +306,7 @@ const ChatInterface = () => {
         if (result.isConfirmed) {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                await axios.delete(`${ENDPOINT}/api/chat/${currentChatId}`, config);
+                await api.delete(`/chat/${currentChatId}`, config);
                 await Swal.fire('Deleted!', 'Your chat has been deleted.', 'success');
                 if (user.role !== 'admin') fetchConversations();
                 createNewChat();
@@ -331,7 +331,7 @@ const ChatInterface = () => {
         if (result.isConfirmed) {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                await axios.delete(`${ENDPOINT}/api/chat/${chatId}`, config);
+                await api.delete(`/chat/${chatId}`, config);
                 if (currentChatId === chatId) createNewChat();
                 if (user.role !== 'admin') fetchConversations();
                 Swal.fire({ title: 'Deleted!', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
@@ -412,7 +412,7 @@ const ChatInterface = () => {
                                 if (res.isConfirmed) {
                                     try {
                                         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                                        await axios.put(`${ENDPOINT}/api/chat/${currentChatId}/end-support`, {}, config);
+                                        await api.put(`/chat/${currentChatId}/end-support`, {}, config);
                                         fetchConversations();
                                         Swal.fire('Ended', 'Support session ended.', 'success');
                                     } catch (e) { console.error(e); }
@@ -445,7 +445,7 @@ const ChatInterface = () => {
                                             onClick={async () => {
                                                 try {
                                                     const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                                                    await axios.put(`${ENDPOINT}/api/chat/${currentChatId}/assign`, {}, config);
+                                                    await api.put(`/chat/${currentChatId}/assign`, {}, config);
                                                     fetchConversations();
                                                 } catch (err) { alert(err.response?.data?.message || "Failed to join"); }
                                             }}
@@ -478,7 +478,7 @@ const ChatInterface = () => {
                                                     try {
                                                         const config = { headers: { Authorization: `Bearer ${user.token}` } };
                                                         // Use new atomic endpoint
-                                                        await axios.put(`${ENDPOINT}/api/chat/${currentChatId}/admin-end-support`, {}, config);
+                                                        await api.put(`/chat/${currentChatId}/admin-end-support`, {}, config);
 
                                                         fetchConversations();
                                                         Swal.fire('Session Ended', 'The support session has been closed successfully.', 'success');

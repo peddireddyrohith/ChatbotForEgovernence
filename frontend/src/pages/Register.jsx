@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaIdCard, FaCheckCircle, FaSpinner } from 'react-icons/fa';
 
 const Register = () => {
@@ -46,7 +45,7 @@ const Register = () => {
         setLoading(true);
         try {
             // First call: Register to send OTP
-            const { data } = await axios.post('http://localhost:5000/api/auth/register', formData);
+            const { data } = await api.post('/auth/register', formData);
             if (data.devOtp) {
                 alert(`DEV MODE OTP: ${data.devOtp}`);
             } else {
@@ -65,7 +64,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/verify-otp', {
+            const { data } = await api.post('/auth/verify-otp', {
                 email: formData.email,
                 otp
             });

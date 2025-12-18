@@ -11,3 +11,28 @@
 .glass {
   @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg;
 }
+
+.glass-strong {
+  @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm transition-all duration-300;
+}
+
+.text-gradient-premium {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 dark:from-violet-400 dark:via-indigo-400 dark:to-cyan-400;
+}
+
+.nav-link {
+  @apply px-4 py-2 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-all duration-200 relative overflow-hidden;
+}
+
+.nav-link-active {
+  @apply px-4 py-2 rounded-full text-sm font-medium text-white bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md transform scale-105 hover:shadow-lg transition-all duration-200;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}

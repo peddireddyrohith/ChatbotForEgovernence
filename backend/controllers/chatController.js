@@ -182,7 +182,9 @@ const sendMessage = async (req, res) => {
                         method: "POST",
                         headers: {
                             "Authorization": `Bearer ${apiKey}`,
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": "http://localhost:5000", // Required by OpenRouter for free/low-tier
+                            "X-Title": "E-Governance Chatbot" // Required by OpenRouter
                         },
                         body: JSON.stringify({
                             "model": "meta-llama/llama-3.1-8b-instruct",
@@ -203,7 +205,9 @@ const sendMessage = async (req, res) => {
                     botResponseText = data.choices[0].message.content;
 
                 } catch (aiError) {
-                    console.error("AI/Network Error:", aiError.message);
+                    console.error("AI/Network Error Details:", aiError);
+                    if (aiError.message) console.error("Message:", aiError.message);
+                    if (aiError.cause) console.error("Cause:", aiError.cause);
 
                     // OFFLINE / FALLBACK INTELLIGENCE
                     botResponseText = "";
